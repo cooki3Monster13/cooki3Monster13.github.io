@@ -1,0 +1,1642 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Katherine Marcus — Software Engineer</title>
+  <meta name="description" content="Software engineer building AI products at Microsoft. I write about how to use AI thoughtfully." />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Instrument+Serif&family=Fraunces:opsz,wght,SOFT@9..144,400;9..144,500;9..144,600&family=Permanent+Marker&family=Shadows+Into+Light&family=Architects+Daughter&display=swap" rel="stylesheet">
+  <style>
+    /* ============================================================
+       Three-anchor palette system.
+       Variables are SET BY JS based on slider position (0..1).
+       0    = tech         (dark, robot, binary)
+       0.5  = blend        (warm earthy modern — the default, the fusion)
+       1    = whimsy       (nature, florals, butterflies)
+       Interpolation is continuous — every position between is real.
+       ============================================================ */
+    :root {
+      --bg: #ebe2d0;
+      --bg-soft: #ddd0b8;
+      --border: #b8a385;
+      --text: #2a2218;
+      --text-soft: #5a4d3a;
+      --text-quiet: #8a7860;
+      --accent: #b06642;
+      --accent-soft: rgba(176, 102, 66, 0.12);
+
+      --grid-opacity: 0;
+      --paper-opacity: 1;
+      --floral-opacity: 0;
+      --card-radius: 16px;
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', system-ui, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      transition: background-color .25s linear, color .25s linear;
+    }
+
+    /* ---------- typography helpers ---------- */
+    .serif-italic { font-family: 'Fraunces', serif; font-style: italic; font-weight: 400; }
+    .display { font-family: 'Fraunces', serif; letter-spacing: -0.015em; font-weight: 500; }
+    .mono { font-family: 'JetBrains Mono', ui-monospace, monospace; }
+    .text-soft { color: var(--text-soft); }
+    .text-quiet { color: var(--text-quiet); }
+    .text-accent { color: var(--accent); }
+    .bg-soft { background: var(--bg-soft); transition: background-color .25s linear; }
+    .border-line { border-color: var(--border); transition: border-color .25s linear; }
+
+    .link-underline { background-image: linear-gradient(currentColor, currentColor); background-position: 0 100%; background-repeat: no-repeat; background-size: 100% 1px; transition: background-size .2s, color .2s; }
+    .link-underline:hover { background-size: 0% 1px; color: var(--accent); }
+
+    .card {
+      background: var(--bg-soft);
+      border: 1px solid var(--border);
+      border-radius: var(--card-radius);
+      transition: background-color .25s linear, border-color .25s linear, transform .2s;
+    }
+    .card:hover { border-color: var(--text-quiet); }
+
+    .pill {
+      background: var(--accent-soft);
+      color: var(--accent);
+      border: 1px solid color-mix(in oklab, var(--accent) 30%, transparent);
+    }
+
+    .dot { width:6px; height:6px; border-radius:999px; background:#22c55e; display:inline-block; box-shadow: 0 0 0 4px rgba(34,197,94,.18); }
+
+    /* ============================================================
+       Three layered background textures.
+       Their opacities are blended by the slider.
+       ============================================================ */
+    .bg-layer { position: absolute; inset: 0; pointer-events: none; transition: opacity .25s linear; }
+
+    /* Tech: grid lines + amber radial */
+    .bg-grid {
+      opacity: var(--grid-opacity);
+      background-image:
+        radial-gradient(circle at center, rgba(244,162,97,.06), transparent 60%),
+        linear-gradient(#26262b 1px, transparent 1px),
+        linear-gradient(90deg, #26262b 1px, transparent 1px);
+      background-size: auto, 36px 36px, 36px 36px;
+      background-position: center, -1px -1px, -1px -1px;
+      mask-image: radial-gradient(ellipse at center, black 30%, transparent 75%);
+    }
+
+    /* Blend: paper texture — subtle organic noise + warm radial */
+    .bg-paper {
+      opacity: var(--paper-opacity);
+      background-image:
+        radial-gradient(ellipse at 30% 20%, rgba(176, 102, 66, 0.08), transparent 50%),
+        radial-gradient(ellipse at 70% 80%, rgba(184, 163, 133, 0.10), transparent 50%),
+        radial-gradient(1px 1px at 12% 14%, rgba(74, 56, 36, 0.10) 50%, transparent 52%),
+        radial-gradient(1.2px 1.2px at 35% 62%, rgba(74, 56, 36, 0.08) 50%, transparent 52%),
+        radial-gradient(1.5px 1.5px at 68% 28%, rgba(74, 56, 36, 0.10) 50%, transparent 52%),
+        radial-gradient(1.4px 1.4px at 88% 72%, rgba(74, 56, 36, 0.08) 50%, transparent 52%),
+        radial-gradient(1px 1px at 50% 88%, rgba(74, 56, 36, 0.08) 50%, transparent 52%);
+      background-size: auto, auto, 200px 200px, 240px 240px, 180px 180px, 220px 220px, 260px 260px;
+      mask-image: radial-gradient(ellipse at center, black 35%, transparent 80%);
+    }
+
+    /* Whimsy: floral dots + soft pink/rose radial — base layer */
+    .bg-floral {
+      opacity: var(--floral-opacity);
+      background-image:
+        radial-gradient(ellipse at 20% 30%, rgba(192, 48, 107, 0.12), transparent 45%),
+        radial-gradient(ellipse at 80% 75%, rgba(244, 143, 177, 0.18), transparent 45%),
+        radial-gradient(2.5px 2.5px at 22% 28%, rgba(192, 48, 107, 0.26) 50%, transparent 52%),
+        radial-gradient(2px 2px at 65% 18%, rgba(244, 143, 177, 0.32) 50%, transparent 52%),
+        radial-gradient(2.5px 2.5px at 78% 62%, rgba(192, 48, 107, 0.24) 50%, transparent 52%),
+        radial-gradient(3px 3px at 38% 75%, rgba(244, 143, 177, 0.28) 50%, transparent 52%),
+        radial-gradient(2px 2px at 53% 48%, rgba(192, 48, 107, 0.20) 50%, transparent 52%);
+      background-size: auto, auto, 220px 220px, 260px 260px, 200px 200px, 280px 280px, 240px 240px;
+      mask-image: radial-gradient(ellipse at center, black 30%, transparent 75%);
+    }
+
+    /* Butterfly + leaf SVG accents — opacity tied to whimsy */
+    .botanical {
+      position: absolute;
+      pointer-events: none;
+      opacity: var(--floral-opacity);
+      transition: opacity .25s linear;
+    }
+    .botanical svg { display: block; }
+    /* gentle drift / flutter — butterflies only */
+    @keyframes flutter {
+      0%, 100% { transform: translateY(0) rotate(var(--rot, 0deg)); }
+      50%      { transform: translateY(-6px) rotate(calc(var(--rot, 0deg) + 4deg)); }
+    }
+    .butterfly-fly {
+      animation: flutter 5.5s ease-in-out infinite;
+    }
+
+    /* ============================================================
+       AI RECEIPTS — diner notepad style.
+       Identical across all slider positions. The throughline.
+       Marker fonts: Permanent Marker (headers/totals), Shadows Into Light (body)
+       ============================================================ */
+    .receipt {
+      position: relative;
+      background:
+        linear-gradient(180deg, transparent 0, transparent 31px, rgba(0,0,0,0.05) 31px, rgba(0,0,0,0.05) 32px, transparent 32px) 0 0 / 100% 32px,
+        #fffbe6;
+      color: #1f1408;
+      font-family: 'Shadows Into Light', cursive;
+      font-size: 21px;
+      line-height: 32px;
+      padding: 26px 30px 32px;
+      border-radius: 4px;
+      box-shadow:
+        0 1px 0 rgba(0,0,0,0.05),
+        0 12px 30px -16px rgba(0,0,0,0.45),
+        0 30px 50px -30px rgba(0,0,0,0.35);
+      transform: rotate(-0.7deg);
+      max-width: 480px;
+      margin: 6px auto;
+      border: 1px solid #efe2ad;
+    }
+    .receipt::before {
+      content: '';
+      position: absolute;
+      top: -6px; left: 0; right: 0;
+      height: 6px;
+      background:
+        radial-gradient(circle at 6px 6px, transparent 4px, #fffbe6 4.5px) 0 0 / 12px 12px;
+      filter: drop-shadow(0 1px 0 rgba(0,0,0,0.08));
+    }
+    .receipt::after {
+      content: '';
+      position: absolute;
+      bottom: -6px; left: 0; right: 0;
+      height: 6px;
+      background:
+        radial-gradient(circle at 6px 0, transparent 4px, #fffbe6 4.5px) 0 0 / 12px 12px;
+      filter: drop-shadow(0 1px 0 rgba(0,0,0,0.08));
+    }
+    .receipt h4 {
+      font-family: 'Permanent Marker', cursive;
+      font-weight: 400;
+      font-size: 26px;
+      text-align: center;
+      letter-spacing: 0.5px;
+      margin-bottom: 0;
+      color: #1c1208;
+    }
+    .receipt .biz {
+      text-align: center;
+      font-family: 'Architects Daughter', cursive;
+      font-size: 13px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: #6b5b3a;
+      margin-bottom: 16px;
+      margin-top: 4px;
+    }
+    .receipt .item {
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+    }
+    .receipt .item .label { white-space: nowrap; }
+    .receipt .item .dots {
+      flex: 1;
+      border-bottom: 1.5px dotted #a89868;
+      transform: translateY(-5px);
+      margin: 0 6px;
+    }
+    .receipt .item .val { white-space: nowrap; font-weight: 400; }
+    .receipt hr { border: 0; border-top: 1.5px dashed #a89868; margin: 14px 0 12px; }
+    .receipt .total-row {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 6px;
+      font-family: 'Permanent Marker', cursive;
+      font-size: 23px;
+      position: relative;
+    }
+    .receipt .total-circled {
+      display: inline-block;
+      position: relative;
+      padding: 4px 10px;
+      color: #b22220;
+    }
+    .receipt .total-circled::before {
+      content: '';
+      position: absolute;
+      inset: -6px -10px;
+      border: 2.5px solid #b22220;
+      border-radius: 60% 50% 65% 55% / 55% 70% 50% 60%;
+      transform: rotate(-3deg);
+      pointer-events: none;
+    }
+    .receipt .tip-line {
+      margin-top: 16px;
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+      color: #5a4023;
+    }
+    .receipt .tip-line a {
+      color: #b22220;
+      text-decoration: underline wavy;
+      text-underline-offset: 4px;
+      font-weight: 400;
+    }
+    .receipt .foot {
+      text-align: center;
+      margin-top: 16px;
+      font-family: 'Architects Daughter', cursive;
+      font-size: 13px;
+      color: #6b5b3a;
+      letter-spacing: 1px;
+    }
+
+    /* ============================================================
+       History timeline
+       ============================================================ */
+    .timeline { position: relative; padding-left: 28px; }
+    .timeline::before {
+      content: '';
+      position: absolute;
+      top: 8px; bottom: 8px; left: 9px;
+      width: 2px;
+      background: var(--border);
+    }
+    .timeline { counter-reset: step; }
+    .timeline-item { position: relative; margin-bottom: 28px; }
+    .timeline-item::before {
+      content: counter(step);
+      counter-increment: step;
+      position: absolute;
+      left: -28px;
+      top: 4px;
+      width: 22px; height: 22px;
+      border-radius: 999px;
+      background: var(--bg-soft);
+      border: 2px solid var(--accent);
+      color: var(--accent);
+      font-size: 11px;
+      font-weight: 600;
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      display: grid; place-items: center;
+      transition: background-color .25s, border-color .25s, color .25s;
+    }
+    .iter-card {
+      background: var(--bg-soft);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px 18px;
+    }
+    .diff-old, .diff-new {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 12.5px;
+      line-height: 1.7;
+      padding: 10px 12px;
+      border-radius: 6px;
+      white-space: pre-wrap;
+    }
+    .diff-old { background: rgba(178, 34, 32, 0.10); color: #8c2826; border-left: 2.5px solid #b22220; }
+    .diff-new { background: rgba(122, 142, 94, 0.14); color: #4a6242; border-left: 2.5px solid #7a8e5e; }
+
+    /* ============================================================
+       The slider control
+       ============================================================ */
+    .mode-slider-wrap {
+      display: flex; align-items: center; gap: 10px;
+      font-size: 12px;
+      color: var(--text-quiet);
+      transition: color .25s linear;
+    }
+    .mode-slider-label {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      letter-spacing: 0.5px;
+      user-select: none;
+    }
+    .mode-slider {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 140px;
+      height: 6px;
+      border-radius: 999px;
+      outline: none;
+      cursor: pointer;
+      background: linear-gradient(90deg,
+        #0a0a0b 0%,
+        #b06642 50%,
+        #c0306b 100%);
+      transition: background .25s linear, opacity .25s;
+    }
+    .mode-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 18px; height: 18px;
+      border-radius: 999px;
+      background: var(--bg);
+      border: 2.5px solid var(--text);
+      cursor: grab;
+      transition: transform .15s, border-color .25s, background-color .25s;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.18);
+    }
+    .mode-slider:active::-webkit-slider-thumb { cursor: grabbing; transform: scale(1.1); }
+    .mode-slider::-moz-range-thumb {
+      width: 18px; height: 18px;
+      border-radius: 999px;
+      background: var(--bg);
+      border: 2.5px solid var(--text);
+      cursor: grab;
+      transition: transform .15s;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.18);
+    }
+    .reset-link {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 10.5px;
+      color: var(--text-quiet);
+      cursor: pointer;
+      letter-spacing: 0.5px;
+      transition: color .25s;
+    }
+    .reset-link:hover { color: var(--accent); }
+
+    /* Subtle stamp */
+    .stamp {
+      display: inline-block;
+      transform: rotate(-4deg);
+      font-family: 'Permanent Marker', cursive;
+      letter-spacing: 1px;
+      padding: 3px 12px;
+      border: 1.5px dashed var(--accent);
+      color: var(--accent);
+      border-radius: 4px;
+      font-size: 13px;
+    }
+
+    /* ============================================================
+       WIP / under-construction treatment.
+       Charming, not garish. Faint blueprint wash + corner ribbon.
+       ============================================================ */
+    .wip-card {
+      position: relative;
+      overflow: hidden;
+    }
+    .wip-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 110px;
+      pointer-events: none;
+      opacity: 0.55;
+      background-image:
+        linear-gradient(rgba(184, 95, 5, 0.07) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(184, 95, 5, 0.07) 1px, transparent 1px);
+      background-size: 12px 12px;
+      mask-image: linear-gradient(180deg, rgba(0,0,0,0.7), transparent);
+    }
+    .wip-card::after {
+      content: '🚧 wip';
+      position: absolute;
+      top: 14px;
+      right: -36px;
+      transform: rotate(35deg);
+      background: #d97706;
+      color: #fff;
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 10px;
+      letter-spacing: 1.5px;
+      padding: 3px 40px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+      z-index: 1;
+    }
+    .pill-wip {
+      background: rgba(217, 119, 6, 0.14);
+      color: rgb(184, 95, 5);
+      border: 1px solid rgba(184, 95, 5, 0.3);
+    }
+    .construction-note {
+      margin: 12px 0 18px;
+      padding: 10px 14px;
+      border-left: 2.5px solid #d97706;
+      background: rgba(217, 119, 6, 0.06);
+      font-family: 'Architects Daughter', cursive;
+      font-size: 14px;
+      line-height: 1.55;
+      color: rgb(120, 70, 10);
+      border-radius: 0 6px 6px 0;
+    }
+    .construction-note .label {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 10px;
+      letter-spacing: 1.5px;
+      color: rgb(184, 95, 5);
+      text-transform: uppercase;
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    /* ============================================================
+       Notebook / sticky-note visuals for tone + vision references.
+       Mind-map vibes. Same hand-made aesthetic as the receipts.
+       ============================================================ */
+    .notebook {
+      background: #fffbe6;
+      color: #1f1408;
+      font-family: 'Shadows Into Light', cursive;
+      font-size: 16px;
+      line-height: 26px;
+      padding: 22px 24px 24px;
+      border-radius: 4px;
+      box-shadow:
+        0 1px 0 rgba(0,0,0,0.05),
+        0 8px 20px -10px rgba(0,0,0,0.30),
+        0 20px 40px -20px rgba(0,0,0,0.20);
+      transform: rotate(-0.4deg);
+      border: 1px solid #efe2ad;
+      position: relative;
+      background-image:
+        linear-gradient(180deg, transparent 0, transparent 25px, rgba(173, 144, 78, 0.16) 25px, rgba(173, 144, 78, 0.16) 26px, transparent 26px) 0 0 / 100% 26px;
+    }
+    .notebook h5 {
+      font-family: 'Permanent Marker', cursive;
+      font-size: 18px;
+      color: #b22220;
+      margin: 0 0 12px;
+      letter-spacing: 0.5px;
+    }
+    .notebook ul { margin: 0; padding: 0 0 0 4px; list-style: none; }
+    .notebook li { padding-left: 0; }
+    .notebook .yes {
+      color: #2d6b3a;
+    }
+    .notebook .no {
+      color: #b22220;
+      text-decoration: line-through;
+      text-decoration-thickness: 1.5px;
+    }
+    .notebook .arrow { color: #5a4023; padding: 0 8px; }
+    .notebook .corner-tape {
+      position: absolute;
+      top: -8px;
+      width: 60px; height: 18px;
+      background: rgba(212, 175, 55, 0.55);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.12);
+    }
+    .notebook .corner-tape.left { left: 20px; transform: rotate(-3deg); }
+    .notebook .corner-tape.right { right: 20px; transform: rotate(4deg); }
+
+    .sticky {
+      background: #fae5a3;
+      color: #2a1d10;
+      padding: 14px 16px;
+      font-family: 'Shadows Into Light', cursive;
+      font-size: 15px;
+      line-height: 1.5;
+      transform: rotate(2deg);
+      box-shadow: 0 4px 10px -4px rgba(0,0,0,0.25);
+      border-radius: 2px;
+    }
+    .sticky.pink   { background: #f7c9d8; transform: rotate(-2.5deg); }
+    .sticky.green  { background: #d4e5b5; transform: rotate(1.5deg); }
+    .sticky.blue   { background: #c5dce8; transform: rotate(-1deg); }
+    .sticky h6 {
+      font-family: 'Permanent Marker', cursive;
+      font-size: 14px;
+      color: #b22220;
+      margin: 0 0 6px;
+      letter-spacing: 0.5px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- MAINTENANCE OVERLAY -->
+  <div style="position: fixed; inset: 0; pointer-events: none; z-index: 9999; overflow: hidden;">
+    <!-- diagonal caution tape strips -->
+    <div style="
+      position: absolute;
+      top: -100px; left: -100px; right: -100px; bottom: -100px;
+      background: repeating-linear-gradient(
+        -45deg,
+        rgba(217, 119, 6, 0.13) 0px,
+        rgba(217, 119, 6, 0.13) 40px,
+        transparent 40px,
+        transparent 80px
+      );
+    "></div>
+    <!-- center badge -->
+    <div style="
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%) rotate(-8deg);
+      background: #d97706;
+      color: #fff;
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      padding: 14px 36px;
+      border-radius: 4px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+      text-align: center;
+      white-space: nowrap;
+    ">
+      🚧 &nbsp;under construction &nbsp;🚧<br/>
+      <span style="font-size: 10px; letter-spacing: 1.5px; opacity: 0.85;">check back soon</span>
+    </div>
+    <!-- corner ribbons -->
+    <div style="position:absolute; top:28px; left:-48px; width:180px; padding:8px 0; background:#d97706; color:#fff; font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:2px; text-align:center; transform:rotate(-45deg); box-shadow:0 2px 8px rgba(0,0,0,0.2);">WIP</div>
+    <div style="position:absolute; top:28px; right:-48px; width:180px; padding:8px 0; background:#d97706; color:#fff; font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:2px; text-align:center; transform:rotate(45deg); box-shadow:0 2px 8px rgba(0,0,0,0.2);">WIP</div>
+  </div>
+
+  <!-- NAV -->
+  <nav class="sticky top-0 z-40 backdrop-blur border-b" style="background: color-mix(in oklab, var(--bg) 78%, transparent); border-color: var(--border);">
+    <div class="max-w-3xl mx-auto px-6 py-4 flex items-center justify-between text-sm gap-4">
+      <a href="#top" class="font-medium tracking-tight display">Katherine&nbsp;Marcus</a>
+      <div class="flex items-center gap-5 text-soft">
+        <a href="#projects" class="hover:opacity-100 transition">Projects</a>
+        <a href="manifesto.html" class="hover:opacity-100 transition" style="color: var(--accent);">Manifesto ↗</a>
+        <a href="#writing" class="hover:opacity-100 transition">Writing</a>
+        <a href="#about" class="hover:opacity-100 transition">About</a>
+        <div class="mode-slider-wrap" role="group" aria-label="Katherine mode">
+          <span class="mode-slider-label">◆ tech</span>
+          <input
+            id="mode-slider"
+            class="mode-slider"
+            type="range"
+            min="0"
+            max="100"
+            value="50"
+            step="1"
+            aria-label="Slide between tech, fusion, and whimsy"
+          />
+          <span class="mode-slider-label">whimsy ✿</span>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <header id="top" class="relative overflow-hidden">
+    <div class="bg-layer bg-grid"></div>
+    <div class="bg-layer bg-paper"></div>
+    <div class="bg-layer bg-floral"></div>
+
+    <!-- Botanical accents (whimsy) — fade in with slider -->
+    <!-- Large pink butterfly (top-left) -->
+    <div class="botanical butterfly-fly" style="top: 30px; left: 3%; transform: rotate(-12deg); animation-delay: 0s;">
+      <svg width="68" height="52" viewBox="0 0 100 80" xmlns="http://www.w3.org/2000/svg">
+        <g fill="#c0306b" opacity="0.65">
+          <path d="M50 36 C 35 12, 10 16, 12 38 C 14 54, 36 50, 50 40 Z"/>
+          <path d="M50 36 C 65 12, 90 16, 88 38 C 86 54, 64 50, 50 40 Z"/>
+          <path d="M50 40 C 38 46, 20 62, 32 74 C 42 78, 50 60, 50 44 Z"/>
+          <path d="M50 40 C 62 46, 80 62, 68 74 C 58 78, 50 60, 50 44 Z"/>
+        </g>
+        <g fill="#fcdce8" opacity="0.8">
+          <circle cx="28" cy="30" r="3"/>
+          <circle cx="72" cy="30" r="3"/>
+          <circle cx="34" cy="58" r="2"/>
+          <circle cx="66" cy="58" r="2"/>
+        </g>
+        <ellipse cx="50" cy="42" rx="1.5" ry="20" fill="#3d1828"/>
+        <line x1="50" y1="22" x2="44" y2="14" stroke="#3d1828" stroke-width="1.2" stroke-linecap="round"/>
+        <line x1="50" y1="22" x2="56" y2="14" stroke="#3d1828" stroke-width="1.2" stroke-linecap="round"/>
+      </svg>
+    </div>
+
+    <!-- Sage butterfly (top-right) -->
+    <div class="botanical butterfly-fly" style="top: 200px; right: 4%; transform: rotate(18deg); animation-delay: 1.4s;">
+      <svg width="76" height="58" viewBox="0 0 100 80" xmlns="http://www.w3.org/2000/svg">
+        <g fill="#7a8e5e" opacity="0.55">
+          <path d="M50 36 C 35 14, 12 18, 14 38 C 16 52, 36 50, 50 40 Z"/>
+          <path d="M50 36 C 65 14, 88 18, 86 38 C 84 52, 64 50, 50 40 Z"/>
+          <path d="M50 40 C 38 46, 22 60, 32 72 C 42 76, 50 60, 50 44 Z"/>
+          <path d="M50 40 C 62 46, 78 60, 68 72 C 58 76, 50 60, 50 44 Z"/>
+        </g>
+        <ellipse cx="50" cy="42" rx="1.5" ry="18" fill="#3d1828"/>
+      </svg>
+    </div>
+
+    <!-- Small dusty-pink butterfly (mid right) -->
+    <div class="botanical butterfly-fly" style="top: 380px; right: 14%; transform: rotate(-8deg); animation-delay: 2.2s;">
+      <svg width="42" height="32" viewBox="0 0 100 80" xmlns="http://www.w3.org/2000/svg">
+        <g fill="#df9ab2" opacity="0.75">
+          <path d="M50 36 C 35 14, 12 18, 14 38 C 16 52, 36 50, 50 40 Z"/>
+          <path d="M50 36 C 65 14, 88 18, 86 38 C 84 52, 64 50, 50 40 Z"/>
+          <path d="M50 40 C 38 46, 22 60, 32 72 C 42 76, 50 60, 50 44 Z"/>
+          <path d="M50 40 C 62 46, 78 60, 68 72 C 58 76, 50 60, 50 44 Z"/>
+        </g>
+        <ellipse cx="50" cy="42" rx="1.5" ry="18" fill="#3d1828"/>
+      </svg>
+    </div>
+
+    <!-- Floral sprig (bottom-left) -->
+    <div class="botanical" style="bottom: 30px; left: 4%;">
+      <svg width="64" height="72" viewBox="0 0 60 70" xmlns="http://www.w3.org/2000/svg">
+        <path d="M30 65 C 28 50, 22 35, 14 26" stroke="#7a8e5e" stroke-width="1.5" fill="none" opacity="0.8"/>
+        <path d="M30 65 C 32 50, 38 40, 44 32" stroke="#7a8e5e" stroke-width="1.5" fill="none" opacity="0.7"/>
+        <ellipse cx="20" cy="34" rx="6" ry="3" fill="#7a8e5e" opacity="0.6" transform="rotate(-30 20 34)"/>
+        <ellipse cx="26" cy="46" rx="6" ry="3" fill="#7a8e5e" opacity="0.55" transform="rotate(35 26 46)"/>
+        <ellipse cx="38" cy="40" rx="5" ry="2.5" fill="#7a8e5e" opacity="0.5" transform="rotate(30 38 40)"/>
+        <circle cx="14" cy="22" r="4" fill="#c0306b" opacity="0.7"/>
+        <circle cx="11" cy="20" r="2" fill="#fcdce8" opacity="0.8"/>
+        <circle cx="46" cy="28" r="3" fill="#df9ab2" opacity="0.8"/>
+      </svg>
+    </div>
+
+    <!-- Tiny butterfly (bottom-right of hero) -->
+    <div class="botanical butterfly-fly" style="bottom: 60px; right: 12%; transform: rotate(22deg); animation-delay: 3.1s;">
+      <svg width="34" height="26" viewBox="0 0 100 80" xmlns="http://www.w3.org/2000/svg">
+        <g fill="#c0306b" opacity="0.65">
+          <path d="M50 36 C 35 14, 12 18, 14 38 C 16 52, 36 50, 50 40 Z"/>
+          <path d="M50 36 C 65 14, 88 18, 86 38 C 84 52, 64 50, 50 40 Z"/>
+          <path d="M50 40 C 38 46, 22 60, 32 72 C 42 76, 50 60, 50 44 Z"/>
+          <path d="M50 40 C 62 46, 78 60, 68 72 C 58 76, 50 60, 50 44 Z"/>
+        </g>
+        <ellipse cx="50" cy="42" rx="1.5" ry="18" fill="#3d1828"/>
+      </svg>
+    </div>
+
+    <!-- Mid-hero small sage butterfly -->
+    <div class="botanical butterfly-fly" style="top: 130px; right: 32%; transform: rotate(-26deg); animation-delay: 4.0s;">
+      <svg width="30" height="24" viewBox="0 0 100 80" xmlns="http://www.w3.org/2000/svg">
+        <g fill="#7a8e5e" opacity="0.6">
+          <path d="M50 36 C 35 14, 12 18, 14 38 C 16 52, 36 50, 50 40 Z"/>
+          <path d="M50 36 C 65 14, 88 18, 86 38 C 84 52, 64 50, 50 40 Z"/>
+          <path d="M50 40 C 38 46, 22 60, 32 72 C 42 76, 50 60, 50 44 Z"/>
+          <path d="M50 40 C 62 46, 78 60, 68 72 C 58 76, 50 60, 50 44 Z"/>
+        </g>
+        <ellipse cx="50" cy="42" rx="1.5" ry="18" fill="#3d1828"/>
+      </svg>
+    </div>
+
+    <!-- Mid-hero medium pink butterfly with dots -->
+    <div class="botanical butterfly-fly" style="bottom: 220px; left: 28%; transform: rotate(10deg); animation-delay: 0.8s;">
+      <svg width="44" height="34" viewBox="0 0 100 80" xmlns="http://www.w3.org/2000/svg">
+        <g fill="#df9ab2" opacity="0.7">
+          <path d="M50 36 C 35 14, 12 18, 14 38 C 16 52, 36 50, 50 40 Z"/>
+          <path d="M50 36 C 65 14, 88 18, 86 38 C 84 52, 64 50, 50 40 Z"/>
+          <path d="M50 40 C 38 46, 22 60, 32 72 C 42 76, 50 60, 50 44 Z"/>
+          <path d="M50 40 C 62 46, 78 60, 68 72 C 58 76, 50 60, 50 44 Z"/>
+        </g>
+        <g fill="#fcdce8" opacity="0.9">
+          <circle cx="28" cy="30" r="2.5"/><circle cx="72" cy="30" r="2.5"/>
+        </g>
+        <ellipse cx="50" cy="42" rx="1.5" ry="18" fill="#3d1828"/>
+      </svg>
+    </div>
+
+    <!-- Tiny sage butterfly upper right -->
+    <div class="botanical butterfly-fly" style="top: 60px; right: 25%; transform: rotate(8deg); animation-delay: 2.6s;">
+      <svg width="26" height="20" viewBox="0 0 100 80" xmlns="http://www.w3.org/2000/svg">
+        <g fill="#7a8e5e" opacity="0.65">
+          <path d="M50 36 C 35 14, 12 18, 14 38 C 16 52, 36 50, 50 40 Z"/>
+          <path d="M50 36 C 65 14, 88 18, 86 38 C 84 52, 64 50, 50 40 Z"/>
+          <path d="M50 40 C 38 46, 22 60, 32 72 C 42 76, 50 60, 50 44 Z"/>
+          <path d="M50 40 C 62 46, 78 60, 68 72 C 58 76, 50 60, 50 44 Z"/>
+        </g>
+        <ellipse cx="50" cy="42" rx="1.5" ry="18" fill="#3d1828"/>
+      </svg>
+    </div>
+
+    <div class="relative max-w-3xl mx-auto px-6 pt-20 pb-16">
+      <div class="flex items-center gap-2 mb-6 text-xs mono text-soft">
+        <span class="dot"></span>
+        <span>Open to new roles &middot; San&nbsp;Francisco</span>
+      </div>
+      <h1 class="display text-5xl sm:text-6xl leading-[1.05] mb-6">
+        Hi, I'm Katherine.<br />
+        AI engineer by chance, <span class="serif-italic text-accent">AI philosopher by choice</span>.
+      </h1>
+      <p class="text-lg text-soft max-w-2xl leading-relaxed">
+        Software engineer at <span style="color: var(--text)">Microsoft</span>, currently working on the
+        <span style="color: var(--text)">PowerPoint Agent</span>. Before that: Bing Image Creator,
+        Bing Video Creator, Flip Camera, Azure Storage. I believe in the human ability to think critically —
+        and I'm passionate about not losing it.
+        <em class="serif-italic text-accent">When to trust the model, and when (or how) to verify it.</em>
+        Every project I ship comes with receipts. Literal and metaphorical.
+      </p>
+      <p class="mt-5 text-base text-soft max-w-2xl leading-relaxed">
+        This whole site is a working experiment in what it looks like to work with AI as a real partner.
+        <span class="serif-italic text-accent">Balance is the point.</span> I learn something new every day.
+      </p>
+      <div class="mt-8 flex flex-wrap gap-3 text-sm">
+        <a href="#projects" class="inline-flex items-center gap-2 px-4 py-2 rounded-md transition font-medium" style="background: var(--text); color: var(--bg);">See projects →</a>
+        <a href="mailto:hi@kmarcus.dev" class="inline-flex items-center gap-2 px-4 py-2 rounded-md border border-line hover:opacity-80 transition">Get in touch</a>
+        <a href="#" class="inline-flex items-center gap-2 px-4 py-2 rounded-md border border-line hover:opacity-80 transition">Resume (PDF)</a>
+      </div>
+
+      <p class="mt-10 text-sm text-quiet max-w-xl serif-italic">
+        Slide the toggle in the nav. You'll see me lean tech, lean whimsy, or rest in the middle —
+        which is where I actually live. <span style="color: var(--accent)">Two things that look opposed can coexist</span>.
+        That's the whole point of working with AI well.
+      </p>
+    </div>
+  </header>
+
+  <!-- ============================================================
+       FOR YOU — empathy section. The "you are seen" moment.
+       Sits between hero and Now strip on purpose: it earns the rest of the page.
+       ============================================================ -->
+  <section class="relative">
+    <!-- a few butterflies live here in whimsy mode -->
+    <div class="botanical butterfly-fly" style="top: 24px; left: 8%; transform: rotate(-22deg); animation-delay: 0.6s;">
+      <svg width="38" height="30" viewBox="0 0 100 80" xmlns="http://www.w3.org/2000/svg">
+        <g fill="#df9ab2" opacity="0.7">
+          <path d="M50 36 C 35 14, 12 18, 14 38 C 16 52, 36 50, 50 40 Z"/>
+          <path d="M50 36 C 65 14, 88 18, 86 38 C 84 52, 64 50, 50 40 Z"/>
+          <path d="M50 40 C 38 46, 22 60, 32 72 C 42 76, 50 60, 50 44 Z"/>
+          <path d="M50 40 C 62 46, 78 60, 68 72 C 58 76, 50 60, 50 44 Z"/>
+        </g>
+        <ellipse cx="50" cy="42" rx="1.5" ry="18" fill="#3d1828"/>
+      </svg>
+    </div>
+    <div class="botanical butterfly-fly" style="bottom: 28px; right: 9%; transform: rotate(14deg); animation-delay: 1.9s;">
+      <svg width="46" height="36" viewBox="0 0 100 80" xmlns="http://www.w3.org/2000/svg">
+        <g fill="#c0306b" opacity="0.6">
+          <path d="M50 36 C 35 14, 12 18, 14 38 C 16 52, 36 50, 50 40 Z"/>
+          <path d="M50 36 C 65 14, 88 18, 86 38 C 84 52, 64 50, 50 40 Z"/>
+          <path d="M50 40 C 38 46, 22 60, 32 72 C 42 76, 50 60, 50 44 Z"/>
+          <path d="M50 40 C 62 46, 78 60, 68 72 C 58 76, 50 60, 50 44 Z"/>
+        </g>
+        <g fill="#fcdce8" opacity="0.85">
+          <circle cx="28" cy="30" r="2.5"/><circle cx="72" cy="30" r="2.5"/>
+        </g>
+        <ellipse cx="50" cy="42" rx="1.5" ry="18" fill="#3d1828"/>
+      </svg>
+    </div>
+
+    <div class="max-w-3xl mx-auto px-6 pt-2 pb-16 relative">
+      <div class="card p-7 sm:p-9 max-w-2xl">
+        <div class="flex items-center gap-3 mb-5">
+          <span class="stamp">an open letter</span>
+          <span class="mono text-xs text-quiet">if you've been here too</span>
+        </div>
+        <div class="space-y-5 text-soft text-[16px] leading-relaxed">
+          <p>
+            Feeling depressed about the AI slop? <span style="color: var(--text)">Imagine how tired I am.</span> <em class="serif-italic">I worked on it.</em>
+          </p>
+          <p>
+            Feeling burnt out, like the bachelor of science in computer science is starting to feel like a waste? Same.
+            But here's the thing — the muscle you built in CS (debugging, reading other people's code, knowing when something's bullshit) is the <em class="serif-italic text-accent">exact</em> muscle that matters now. The job changed shape, not substance.
+          </p>
+          <p>
+            Feel like you have to shrink yourself — your morals, your taste, your principles — to fit a job description?
+            <span style="color: var(--text)">Me too. We don't have to.</span>
+          </p>
+          <p style="color: var(--text);">
+            I've been there. You are not alone.
+          </p>
+          <blockquote style="border-left: 3px solid var(--accent); padding: 4px 0 4px 16px; margin: 0; font-family: 'Fraunces', serif; font-style: italic; font-size: 18px; color: var(--text);">
+            "Change is inevitable, but transformation is a choice."
+            <span class="mono text-[11px] not-italic text-quiet block mt-1">— John C. Maxwell</span>
+          </blockquote>
+          <p>
+            Technology will evolve with or without us. The good news is we get to choose what we bring along.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- NOW STRIP -->
+  <section class="border-y border-line bg-soft">
+    <div class="max-w-3xl mx-auto px-6 py-5 flex flex-wrap items-baseline gap-x-4 gap-y-1 text-sm">
+      <span class="mono text-quiet uppercase tracking-wider text-xs">Now</span>
+      <span class="text-soft">Building <a href="#projects" class="link-underline" style="color: var(--text)">three small AI projects with full receipts</a></span>
+      <span class="text-quiet">·</span>
+      <span class="text-soft">Reading <a href="#" class="link-underline" style="color: var(--text)">Anthropic's RSP</a></span>
+      <span class="text-quiet">·</span>
+      <span class="text-soft">Baking a country loaf</span>
+    </div>
+  </section>
+
+  <!-- PROJECTS -->
+  <section id="projects" class="max-w-3xl mx-auto px-6 py-20">
+    <div class="flex items-end justify-between mb-10">
+      <h2 class="display text-3xl">Projects</h2>
+      <span class="mono text-xs text-quiet">3 of 3 deployed</span>
+    </div>
+
+    <!-- Tay-Tracks -->
+    <article class="card wip-card p-7 mb-5">
+      <div class="flex items-start gap-4 mb-4">
+        <div class="text-2xl">🎶</div>
+        <div class="flex-1">
+          <div class="flex items-center gap-3 mb-1">
+            <h3 class="display text-xl font-semibold">Tay-Tracks</h3>
+            <span class="pill-wip text-[10px] mono px-2 py-0.5 rounded uppercase tracking-wider">v0 · viewer</span>
+          </div>
+          <p class="text-sm text-soft">A semantic atlas of Taylor Swift's discography, organized as a tour.</p>
+        </div>
+        <a href="#" class="text-sm text-soft hover:opacity-80">→</a>
+      </div>
+      <p class="text-soft leading-relaxed mb-3 text-[15.5px]">
+        Built embeddings over every line of Taylor's catalog, then projected them to 2D so you can wander.
+        Includes an era classifier (88% accuracy on a held-out set of 200 hand-labeled lyrics).
+        I wrote up what the misclassifications taught me about Folklore-vs-Evermore.
+      </p>
+      <p class="text-soft leading-relaxed mb-5 text-[15.5px] serif-italic" style="color: var(--text-quiet);">
+        The catalog rewards specificity, which is the thing AI generation is worst at. The model surfaces patterns; I do the listening.
+      </p>
+      <div class="construction-note">
+        <span class="label">under construction</span>
+        Eras Tour viewer demo lives in the repo. The full deployed version — public search, pre-loaded corpus, live classifier — ships in v1.1 (week after launch).
+      </div>
+      <div class="flex flex-wrap gap-2 text-xs mono mb-6">
+        <span class="px-2 py-1 rounded border border-line text-soft">Next.js</span>
+        <span class="px-2 py-1 rounded border border-line text-soft">Python</span>
+        <span class="px-2 py-1 rounded border border-line text-soft">pgvector</span>
+        <span class="px-2 py-1 rounded border border-line text-soft">d3</span>
+        <span class="px-2 py-1 rounded border border-line text-soft">Claude Sonnet</span>
+      </div>
+
+      <!-- DINER RECEIPT -->
+      <details class="group" open>
+        <summary class="cursor-pointer text-xs mono text-quiet hover:text-accent transition list-none flex items-center gap-2 mb-4">
+          <span class="group-open:rotate-90 inline-block transition">▸</span>
+          AI receipts
+        </summary>
+        <div class="receipt">
+          <h4>Tay-Tracks</h4>
+          <div class="biz">Claude · Sonnet 4.5 · table 4</div>
+          <div class="item"><span class="label">embed calls</span><span class="dots"></span><span class="val">263</span></div>
+          <div class="item"><span class="label">classify calls</span><span class="dots"></span><span class="val">412</span></div>
+          <div class="item"><span class="label">tokens in</span><span class="dots"></span><span class="val">412,103</span></div>
+          <div class="item"><span class="label">tokens out</span><span class="dots"></span><span class="val">38,221</span></div>
+          <div class="item"><span class="label">avg latency</span><span class="dots"></span><span class="val">340 ms</span></div>
+          <div class="item"><span class="label">p95 latency</span><span class="dots"></span><span class="val">820 ms</span></div>
+          <div class="item"><span class="label">energy</span><span class="dots"></span><span class="val">0.31 kWh</span></div>
+          <div class="item"><span class="label">co₂e</span><span class="dots"></span><span class="val">~120 g</span></div>
+          <hr/>
+          <div class="total-row">
+            <span>TOTAL</span>
+            <span class="total-circled">$1.84</span>
+          </div>
+          <div class="tip-line">
+            <span>tip:</span>
+            <span class="dots" style="border-bottom:1.5px dotted #a89868; flex:1; transform:translateY(-5px);"></span>
+            <a href="#" target="_blank" rel="noopener">use ai-receipts &nbsp;❤︎</a>
+          </div>
+          <div class="item" style="margin-top:6px;"><span class="label">manual baseline</span><span class="dots"></span><span class="val">~14 hrs</span></div>
+          <div class="item"><span class="label">ai time</span><span class="dots"></span><span class="val">~4 min</span></div>
+          <div class="foot">— thanks for stopping by —</div>
+        </div>
+      </details>
+
+      <!-- HISTORY TIMELINE -->
+      <details class="group mt-5">
+        <summary class="cursor-pointer text-xs mono text-quiet hover:text-accent transition list-none flex items-center gap-2 mb-4">
+          <span class="group-open:rotate-90 inline-block transition">▸</span>
+          how this evolved
+        </summary>
+        <div class="timeline mt-4">
+
+          <div class="timeline-item">
+            <div class="iter-card">
+              <div class="flex items-baseline justify-between gap-4 mb-2">
+                <div class="display font-semibold">First draft of the era-classifier prompt</div>
+                <div class="mono text-xs text-quiet">apr 28</div>
+              </div>
+              <p class="text-sm text-soft leading-relaxed mb-3">
+                I started with a one-liner system prompt and a list of 11 eras. The model returned reasonable answers
+                but kept hedging — adding "probably" or explaining its reasoning, which broke my parser.
+              </p>
+              <div class="diff-old">SYSTEM: Classify the era of this Taylor Swift lyric. Eras: Debut, Fearless, … TTPD.</div>
+              <p class="text-xs text-quiet mt-3 serif-italic">Output sample: <span style="color: var(--text-soft)">"This is probably Folklore, given the imagery of cardigans and cottages..."</span></p>
+            </div>
+          </div>
+
+          <div class="timeline-item">
+            <div class="iter-card">
+              <div class="flex items-baseline justify-between gap-4 mb-2">
+                <div class="display font-semibold">Added era textures + format constraint</div>
+                <div class="mono text-xs text-quiet">apr 29</div>
+              </div>
+              <p class="text-sm text-soft leading-relaxed mb-3">
+                Two changes: a one-line texture for each era (e.g., "Folklore: indie-folk, fictional characters,
+                cottagecore, melancholy") and an explicit format constraint. The textures were the bigger win —
+                accuracy went from <span class="mono">62%</span> to <span class="mono">79%</span>.
+              </p>
+              <div class="diff-new">SYSTEM: You are a music classifier… [era + texture × 11]. Respond with ONLY the era name. No explanation.</div>
+              <p class="text-xs text-quiet mt-3 serif-italic">Misclassifications mostly between Folklore ↔ Evermore. That's actually fair.</p>
+            </div>
+          </div>
+
+          <div class="timeline-item">
+            <div class="iter-card">
+              <div class="flex items-baseline justify-between gap-4 mb-2">
+                <div class="display font-semibold">Realized my eval set was biased</div>
+                <div class="mono text-xs text-quiet">may 1</div>
+              </div>
+              <p class="text-sm text-soft leading-relaxed mb-3">
+                Reviewing the misclassifications, I noticed my eval set was 40% Folklore/Evermore (my favorites — duh).
+                Rebuilt it to be stratified ~18 lines per era. Accuracy on the new set: <span class="mono">88%</span>.
+                Honest, calibrated, ready to publish.
+              </p>
+              <div class="diff-new">eval_set.csv: 198 lines · stratified · 17–19 per era · labeled by hand</div>
+              <p class="text-xs text-quiet mt-3 serif-italic">Lesson: look at the eval set before trusting the accuracy number.</p>
+            </div>
+          </div>
+
+          <div class="timeline-item">
+            <div class="iter-card">
+              <div class="flex items-baseline justify-between gap-4 mb-2">
+                <div class="display font-semibold">d3 viewer: hand-coded, not AI'd</div>
+                <div class="mono text-xs text-quiet">may 4</div>
+              </div>
+              <p class="text-sm text-soft leading-relaxed mb-3">
+                I wrote the d3 visualization myself. Tried asking Claude to scaffold it twice and rolled back both
+                times — the generated code was bloated and got the era-color mapping wrong in subtle ways. Faster to
+                start clean.
+              </p>
+              <p class="text-xs text-quiet mt-3 serif-italic">Not every part of a project benefits from AI. This is one of them.</p>
+            </div>
+          </div>
+
+        </div>
+      </details>
+    </article>
+
+    <!-- Sourdough Companion -->
+    <article class="card p-7 mb-5">
+      <div class="flex items-start gap-4 mb-4">
+        <div class="text-2xl">🍞</div>
+        <div class="flex-1">
+          <div class="flex items-center gap-3 mb-1">
+            <h3 class="display text-xl font-semibold">Sourdough Companion</h3>
+            <span class="pill text-[10px] mono px-2 py-0.5 rounded uppercase tracking-wider">Live</span>
+          </div>
+          <p class="text-sm text-soft">Upload a photo of your starter or loaf. Get specific, useful feedback.</p>
+        </div>
+        <a href="#" class="text-sm text-soft hover:opacity-80">→</a>
+      </div>
+      <p class="text-soft leading-relaxed mb-3 text-[15.5px]">
+        I bake. Most baking apps don't help when you have a question at 9pm about a starter that's not bubbling.
+        This one does. Multimodal Claude looks at your photo and tells you what stage the starter is in, what to do
+        next, and what's going wrong. Has a baker's percentage calculator and a hands-free voice mode.
+      </p>
+      <p class="text-soft leading-relaxed mb-5 text-[15.5px] serif-italic" style="color: var(--text-quiet);">
+        Claude knows what fermentation looks like; I know my starter. The app is the place where those two pieces of knowledge meet.
+      </p>
+      <div class="flex flex-wrap gap-2 text-xs mono mb-5">
+        <span class="px-2 py-1 rounded border border-line text-soft">Next.js&nbsp;14</span>
+        <span class="px-2 py-1 rounded border border-line text-soft">TypeScript</span>
+        <span class="px-2 py-1 rounded border border-line text-soft">Claude Vision</span>
+        <span class="px-2 py-1 rounded border border-line text-soft">Vercel</span>
+      </div>
+      <details class="group">
+        <summary class="cursor-pointer text-xs mono text-quiet hover:text-accent transition list-none flex items-center gap-2 mb-4">
+          <span class="group-open:rotate-90 inline-block transition">▸</span>
+          AI receipts
+        </summary>
+        <div class="receipt">
+          <h4>Sourdough Companion</h4>
+          <div class="biz">Claude · Sonnet 4.5 · vision</div>
+          <div class="item"><span class="label">avg tokens</span><span class="dots"></span><span class="val">1,840 / 220</span></div>
+          <div class="item"><span class="label">avg latency</span><span class="dots"></span><span class="val">2.1 s</span></div>
+          <div class="item"><span class="label">first token</span><span class="dots"></span><span class="val">410 ms</span></div>
+          <div class="item"><span class="label">energy/eval</span><span class="dots"></span><span class="val">~0.7 Wh</span></div>
+          <div class="item"><span class="label">prompt iters</span><span class="dots"></span><span class="val">40+</span></div>
+          <hr/>
+          <div class="total-row">
+            <span>TOTAL / call</span>
+            <span class="total-circled">$0.018</span>
+          </div>
+          <div class="tip-line">
+            <span>tip:</span>
+            <span class="dots" style="border-bottom:1.5px dotted #a89868; flex:1; transform:translateY(-5px);"></span>
+            <a href="#" target="_blank" rel="noopener">use ai-receipts &nbsp;❤︎</a>
+          </div>
+          <div class="item" style="margin-top:6px;"><span class="label">manual baseline</span><span class="dots"></span><span class="val">10–15 min</span></div>
+          <div class="foot">— thanks for stopping by —</div>
+        </div>
+      </details>
+    </article>
+
+    <!-- Cycle Compass -->
+    <article class="card wip-card p-7 mb-5">
+      <div class="flex items-start gap-4 mb-4">
+        <div class="text-2xl">📚</div>
+        <div class="flex-1">
+          <div class="flex items-center gap-3 mb-1">
+            <h3 class="display text-xl font-semibold">Cycle Compass</h3>
+            <span class="pill-wip text-[10px] mono px-2 py-0.5 rounded uppercase tracking-wider">v0 · designed</span>
+          </div>
+          <p class="text-sm text-soft">RAG over peer-reviewed women's health literature. It refuses when it doesn't know.</p>
+        </div>
+        <a href="#" class="text-sm text-soft hover:opacity-80">→</a>
+      </div>
+      <p class="text-soft leading-relaxed mb-3 text-[15.5px]">
+        Women's health info online is a mess. This is a research assistant that <em>only</em> answers from a
+        curated corpus of open-access papers. If retrieval doesn't find a confident source, it refuses to answer
+        and hands back PubMed search terms. The Safety Panel surfaces refusal rate (18%, on purpose) and citation
+        accuracy from a 50-question eval set.
+      </p>
+      <p class="text-soft leading-relaxed mb-3 text-[15.5px] serif-italic" style="color: var(--text-quiet);">
+        AI is a research assistant here, never the authority. The refusal logic is the whole point — better honest silence than a confident wrong answer about a hormone.
+      </p>
+      <p class="text-soft leading-relaxed mb-5 text-[15.5px]">
+        <strong style="color: var(--text);">Roadmap, v1.x — opt-in journal-pattern surfacing.</strong>
+        Privately-stored journal entries, cross-referenced with cycle phase. When you log a strong feeling, the
+        model can ask
+        <em class="serif-italic text-accent">"is this how you usually feel in this phase?"</em> — instead of
+        answering for you. Local-first; the corpus never leaves your device. The point isn't to be an oracle.
+        The point is helping you learn to trust your own pattern.
+      </p>
+      <div class="construction-note">
+        <span class="label">under construction</span>
+        v0 RAG architecture + eval methodology designed. v1 deploys with the public corpus and refusal logic.
+        v1.x adds the opt-in journal-pattern feature once the privacy architecture is locked.
+      </div>
+      <div class="flex flex-wrap gap-2 text-xs mono mb-5">
+        <span class="px-2 py-1 rounded border border-line text-soft">FastAPI</span>
+        <span class="px-2 py-1 rounded border border-line text-soft">pgvector</span>
+        <span class="px-2 py-1 rounded border border-line text-soft">BM25 + rerank</span>
+        <span class="px-2 py-1 rounded border border-line text-soft">Claude</span>
+      </div>
+      <details class="group">
+        <summary class="cursor-pointer text-xs mono text-quiet hover:text-accent transition list-none flex items-center gap-2 mb-4">
+          <span class="group-open:rotate-90 inline-block transition">▸</span>
+          AI receipts &amp; safety panel
+        </summary>
+        <div class="receipt">
+          <h4>Cycle Compass</h4>
+          <div class="biz">RAG · refusal-gated</div>
+          <div class="item"><span class="label">papers indexed</span><span class="dots"></span><span class="val">412</span></div>
+          <div class="item"><span class="label">chunks</span><span class="dots"></span><span class="val">23,884</span></div>
+          <div class="item"><span class="label">refusal rate</span><span class="dots"></span><span class="val">18.2%</span></div>
+          <div class="item"><span class="label">citation acc</span><span class="dots"></span><span class="val">94% (47/50)</span></div>
+          <div class="item"><span class="label">avg latency</span><span class="dots"></span><span class="val">3.4 s</span></div>
+          <hr/>
+          <div class="total-row">
+            <span>TOTAL / query</span>
+            <span class="total-circled">$0.011</span>
+          </div>
+          <div class="tip-line">
+            <span>tip:</span>
+            <span class="dots" style="border-bottom:1.5px dotted #a89868; flex:1; transform:translateY(-5px);"></span>
+            <a href="#" target="_blank" rel="noopener">use ai-receipts &nbsp;❤︎</a>
+          </div>
+          <div class="foot">— thanks for stopping by —</div>
+        </div>
+      </details>
+    </article>
+
+    <!-- ============================================================
+         Portfolio (this site) — recursive proof
+         ============================================================ -->
+    <article class="card p-7 mb-5">
+      <div class="flex items-start gap-4 mb-4">
+        <div class="text-2xl">📐</div>
+        <div class="flex-1">
+          <div class="flex items-center gap-3 mb-1">
+            <h3 class="display text-xl font-semibold">Portfolio (this site)</h3>
+            <span class="pill text-[10px] mono px-2 py-0.5 rounded uppercase tracking-wider">you're on it</span>
+          </div>
+          <p class="text-sm text-soft">I built a site about iteration. Naturally, the site itself iterated.</p>
+        </div>
+        <a href="#" class="text-sm text-soft hover:opacity-80">→</a>
+      </div>
+      <blockquote class="border-l-2 pl-4 mb-5 serif-italic" style="border-color: var(--accent); color: var(--text-soft);">
+        "And now that you don't have to be perfect, you can be good."
+        <div class="mono text-[11px] not-italic text-quiet mt-1">— John Steinbeck, <em>East of Eden</em></div>
+      </blockquote>
+      <p class="text-soft leading-relaxed mb-5 text-[15.5px]">
+        Think of this like the construction site for a house — blueprints, framing, finished rooms. Below
+        are the v1/v2/v3/v4 sketches. The thesis is the same as for every other project on this page:
+        if I'm asking you to read the receipts, I'd better show you mine.
+      </p>
+
+      <!-- Construction shots — mini stylized renders of each version -->
+      <div class="grid grid-cols-4 gap-3 mb-6">
+        <!-- v1 -->
+        <div class="rounded-lg border border-line p-2 text-center">
+          <svg viewBox="0 0 60 80" class="w-full h-auto rounded mb-1" xmlns="http://www.w3.org/2000/svg">
+            <rect width="60" height="80" fill="#0a0a0b"/>
+            <rect x="6" y="6" width="48" height="3" fill="#f4a261"/>
+            <rect x="6" y="14" width="36" height="2" fill="#a1a1aa"/>
+            <rect x="6" y="22" width="48" height="14" rx="2" fill="#131316"/>
+            <rect x="6" y="40" width="48" height="14" rx="2" fill="#131316"/>
+            <rect x="6" y="58" width="48" height="14" rx="2" fill="#131316"/>
+          </svg>
+          <div class="mono text-[9px] text-quiet">v1 · single mode</div>
+        </div>
+        <!-- v2 -->
+        <div class="rounded-lg border border-line p-2 text-center">
+          <svg viewBox="0 0 60 80" class="w-full h-auto rounded mb-1" xmlns="http://www.w3.org/2000/svg">
+            <rect width="30" height="80" fill="#0a0a0b"/>
+            <rect x="30" width="30" height="80" fill="#fdf5ee"/>
+            <rect x="6" y="6" width="14" height="2" fill="#f4a261"/>
+            <rect x="34" y="6" width="14" height="2" fill="#c44569"/>
+            <rect x="3" y="20" width="24" height="14" rx="2" fill="#131316"/>
+            <rect x="33" y="20" width="24" height="14" rx="3" fill="#f6e8dd"/>
+            <rect x="3" y="40" width="24" height="14" rx="2" fill="#131316"/>
+            <rect x="33" y="40" width="24" height="14" rx="3" fill="#f6e8dd"/>
+          </svg>
+          <div class="mono text-[9px] text-quiet">v2 · dichotomy</div>
+        </div>
+        <!-- v3 -->
+        <div class="rounded-lg border border-line p-2 text-center">
+          <svg viewBox="0 0 60 80" class="w-full h-auto rounded mb-1" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="grad3" x1="0" x2="1">
+                <stop offset="0" stop-color="#0a0a0b"/>
+                <stop offset="0.5" stop-color="#b06642"/>
+                <stop offset="1" stop-color="#b8593d"/>
+              </linearGradient>
+            </defs>
+            <rect width="60" height="80" fill="url(#grad3)"/>
+            <rect x="6" y="6" width="48" height="2" fill="#fff" opacity="0.5"/>
+            <rect x="6" y="22" width="48" height="14" rx="3" fill="#000" opacity="0.15"/>
+            <rect x="6" y="40" width="48" height="14" rx="3" fill="#000" opacity="0.15"/>
+            <rect x="6" y="58" width="48" height="14" rx="3" fill="#000" opacity="0.15"/>
+          </svg>
+          <div class="mono text-[9px] text-quiet">v3 · slider</div>
+        </div>
+        <!-- v4 (current) -->
+        <div class="rounded-lg border-2 p-2 text-center" style="border-color: var(--accent);">
+          <svg viewBox="0 0 60 80" class="w-full h-auto rounded mb-1" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="grad4" x1="0" x2="1">
+                <stop offset="0" stop-color="#0a0a0b"/>
+                <stop offset="0.5" stop-color="#b06642"/>
+                <stop offset="1" stop-color="#c0306b"/>
+              </linearGradient>
+            </defs>
+            <rect width="60" height="80" fill="url(#grad4)"/>
+            <rect x="6" y="6" width="48" height="2" fill="#fff" opacity="0.5"/>
+            <rect x="6" y="22" width="48" height="14" rx="3" fill="#000" opacity="0.15"/>
+            <rect x="6" y="40" width="48" height="14" rx="3" fill="#000" opacity="0.15"/>
+            <rect x="6" y="58" width="48" height="14" rx="3" fill="#000" opacity="0.15"/>
+            <!-- tiny butterfly -->
+            <g transform="translate(43 14)" fill="#fcdce8" opacity="0.9">
+              <circle cx="0" cy="2" r="2.5"/>
+              <circle cx="6" cy="2" r="2.5"/>
+              <circle cx="1" cy="5" r="2"/>
+              <circle cx="5" cy="5" r="2"/>
+            </g>
+          </svg>
+          <div class="mono text-[9px]" style="color: var(--accent);">v4 · you are here</div>
+        </div>
+      </div>
+      <div class="mono text-[10px] text-quiet mb-7 -mt-1">
+        v5 & v6 not pictured · ongoing work logged in the <a href="../portfolio-iterations.md" class="link-underline" style="color: var(--text-soft);">iteration journal</a>.
+      </div>
+
+      <!-- Mind-map: tone reference + vision sticky notes -->
+      <div class="grid md:grid-cols-[1.3fr,1fr] gap-5 mb-7">
+        <div class="notebook">
+          <div class="corner-tape left"></div>
+          <div class="corner-tape right"></div>
+          <h5>voice notes · tone.md</h5>
+          <ul>
+            <li><span class="yes">"i am, on purpose, two things at once"</span></li>
+            <li><span class="no">"i embody a dual nature"</span></li>
+            <li><span class="arrow">↓</span></li>
+            <li><span class="yes">"perfection is procrastination with better lighting"</span></li>
+            <li><span class="no">"i strive to ship in a timely manner"</span></li>
+            <li><span class="arrow">↓</span></li>
+            <li>avoid: <span class="no">leverage · delve · unpack · seamless · robust</span></li>
+            <li>reach for: <span class="yes">balance · taste · honestly · in fact · maybe</span></li>
+          </ul>
+        </div>
+
+        <div class="flex flex-col gap-4 self-start">
+          <div class="sticky pink">
+            <h6>vision · feel</h6>
+            warm. earthy. natural. but still beautiful. two things at once, on purpose. butterflies but not cutesy. modern but lived-in.
+          </div>
+          <div class="sticky">
+            <h6>vision · who's it for</h6>
+            engineering managers at frontier-AI co's who'll spend 60s on this page before they decide.
+          </div>
+          <div class="sticky green">
+            <h6>vision · non-goals</h6>
+            not a Wix template · not a SaaS landing · not corporate · not optimized for "AI maximalist" or "AI skeptic"
+          </div>
+        </div>
+      </div>
+
+      <div class="flex flex-wrap gap-2 text-xs mono mb-6">
+        <span class="px-2 py-1 rounded border border-line text-soft">HTML / CSS / JS</span>
+        <span class="px-2 py-1 rounded border border-line text-soft">Tailwind</span>
+        <span class="px-2 py-1 rounded border border-line text-soft">Next.js (planned)</span>
+        <span class="px-2 py-1 rounded border border-line text-soft">Fraunces · Permanent Marker</span>
+      </div>
+
+      <details class="group" open>
+        <summary class="cursor-pointer text-xs mono text-quiet hover:text-accent transition list-none flex items-center gap-2 mb-4">
+          <span class="group-open:rotate-90 inline-block transition">▸</span>
+          AI receipts
+        </summary>
+        <div class="receipt">
+          <h4>Portfolio</h4>
+          <div class="biz">build · v4 · still under construction</div>
+          <div class="item"><span class="label">major versions</span><span class="dots"></span><span class="val">4</span></div>
+          <div class="item"><span class="label">scrapped takes</span><span class="dots"></span><span class="val">3</span></div>
+          <div class="item"><span class="label">ai-drafted, kept</span><span class="dots"></span><span class="val">~40%</span></div>
+          <div class="item"><span class="label">hand-written</span><span class="dots"></span><span class="val">~60%</span></div>
+          <div class="item"><span class="label">hours so far</span><span class="dots"></span><span class="val">~16</span></div>
+          <div class="item"><span class="label">commits</span><span class="dots"></span><span class="val">— (mock, not git)</span></div>
+          <hr/>
+          <div class="total-row">
+            <span>TOTAL spent</span>
+            <span class="total-circled">$0.12</span>
+          </div>
+          <div class="tip-line">
+            <span>tip:</span>
+            <span class="dots" style="border-bottom:1.5px dotted #a89868; flex:1; transform:translateY(-5px);"></span>
+            <a href="#" target="_blank" rel="noopener">read the iteration log &nbsp;❤︎</a>
+          </div>
+          <div class="foot">— still building. that's the point. —</div>
+        </div>
+      </details>
+
+      <details class="group mt-5">
+        <summary class="cursor-pointer text-xs mono text-quiet hover:text-accent transition list-none flex items-center gap-2 mb-4">
+          <span class="group-open:rotate-90 inline-block transition">▸</span>
+          how this evolved
+        </summary>
+        <div class="timeline mt-4">
+          <div class="timeline-item">
+            <div class="iter-card">
+              <div class="flex items-baseline justify-between gap-4 mb-2">
+                <div class="display font-semibold">v1 — single dark mode, narrow column</div>
+                <div class="mono text-xs text-quiet">may 12 · morning</div>
+              </div>
+              <p class="text-sm text-soft leading-relaxed">
+                First pass looked professional but undifferentiated. Solid bones. No point of view. I knew it.
+              </p>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="iter-card">
+              <div class="flex items-baseline justify-between gap-4 mb-2">
+                <div class="display font-semibold">v2 — tech/whimsy dichotomy + diner receipts</div>
+                <div class="mono text-xs text-quiet">may 12 · afternoon</div>
+              </div>
+              <p class="text-sm text-soft leading-relaxed">
+                Added a tech/whimsy toggle to give the site a personality. Redesigned the receipts as
+                hand-circled diner notepads. Added a "how this evolved" timeline to Tay-Tracks.
+                The hinge moment. Decided the receipts stay identical in both modes — they're the throughline.
+              </p>
+              <p class="text-xs text-quiet mt-3 serif-italic">AI proposed two-receipt-styles. I overrode — same receipt is the stronger metaphor.</p>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="iter-card">
+              <div class="flex items-baseline justify-between gap-4 mb-2">
+                <div class="display font-semibold">v3 — continuous slider, fusion as default</div>
+                <div class="mono text-xs text-quiet">may 12 · evening</div>
+              </div>
+              <p class="text-sm text-soft leading-relaxed">
+                Realized the binary metaphor undersold the AI/human thesis. Replaced with a slider that
+                interpolates continuously across three anchor palettes — and made the *fusion* state the
+                default. The fusion is the real me; tech and whimsy are lenses I let you pick up.
+              </p>
+              <p class="text-xs text-quiet mt-3 serif-italic">AI suggested content-filtering per mode. I cut it — hiring managers scan once.</p>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="iter-card">
+              <div class="flex items-baseline justify-between gap-4 mb-2">
+                <div class="display font-semibold">v4 — pinker whimsy, two new projects, narrative crystallized</div>
+                <div class="mono text-xs text-quiet">may 12 · late</div>
+              </div>
+              <p class="text-sm text-soft leading-relaxed">
+                Made whimsy pinker (dusty pink, rose accent, more butterflies). Added this Portfolio card
+                and MS Paint 2.0 — both move the site from "I use AI well" to "I have a position on AI."
+                Five projects now telling one coherent story.
+              </p>
+              <p class="text-xs text-quiet mt-3 serif-italic">Stretch for v5: a butterfly cursor in whimsy mode. Future me, future problem.</p>
+            </div>
+          </div>
+        </div>
+      </details>
+    </article>
+
+    <!-- ============================================================
+         MS Paint 2.0 — the manifesto
+         ============================================================ -->
+    <article class="card wip-card p-7 mb-5">
+      <div class="flex items-start gap-4 mb-4">
+        <div class="text-2xl">🎨</div>
+        <div class="flex-1">
+          <div class="flex items-center gap-3 mb-1">
+            <h3 class="display text-xl font-semibold">MS Paint 2.0</h3>
+            <span class="pill-wip text-[10px] mono px-2 py-0.5 rounded uppercase tracking-wider">v0 · demo</span>
+          </div>
+          <p class="text-sm text-soft">Made by hand. Verified by mind. Optional AI second opinion.</p>
+        </div>
+        <a href="#" class="text-sm text-soft hover:opacity-80">→</a>
+      </div>
+
+      <p class="text-soft leading-relaxed mb-3 text-[15.5px]">
+        I grew up on MS Paint. I am suspicious of every AI image generator. This is the painting tool I
+        wish existed in 2026 — pixel-perfect, intentional, slow on purpose. <em>It has no "generate" button.</em>
+      </p>
+      <p class="text-soft leading-relaxed mb-5 text-[15.5px]">
+        AI shows up in three deliberate ways and nowhere else: it can <span style="color: var(--accent)">describe</span>
+        what you drew in plain text so you can check that the picture matches your intent; it can
+        <span style="color: var(--accent)">critique</span> your color balance or value range if asked;
+        and it can <span style="color: var(--accent)">find reference photos</span> for you to study — the way
+        an art-school instructor would. AI is the teaching assistant, not the artist.
+      </p>
+
+      <div class="construction-note">
+        <span class="label">under construction</span>
+        Working v0 canvas painter is shippable today (six tools, 32-color palette, save-as-PNG). The three AI helpers are stubs that show what they'd say. Real Claude wiring lands in v0.1, the week after launch.
+      </div>
+
+      <div class="flex flex-wrap gap-2 text-xs mono mb-6">
+        <span class="px-2 py-1 rounded border border-line text-soft">Canvas API</span>
+        <span class="px-2 py-1 rounded border border-line text-soft">vanilla JS</span>
+        <span class="px-2 py-1 rounded border border-line text-soft">intentional pixels</span>
+        <span class="px-2 py-1 rounded border border-line text-soft">Claude (description only)</span>
+      </div>
+
+      <details class="group" open>
+        <summary class="cursor-pointer text-xs mono text-quiet hover:text-accent transition list-none flex items-center gap-2 mb-4">
+          <span class="group-open:rotate-90 inline-block transition">▸</span>
+          AI receipts
+        </summary>
+        <div class="receipt">
+          <h4>MS Paint 2.0</h4>
+          <div class="biz">v0 · the receipt that proves the point</div>
+          <div class="item"><span class="label">brush strokes</span><span class="dots"></span><span class="val">2,841</span></div>
+          <div class="item"><span class="label">pixels painted</span><span class="dots"></span><span class="val">~187k</span></div>
+          <div class="item"><span class="label">ai generation</span><span class="dots"></span><span class="val">0 calls</span></div>
+          <div class="item"><span class="label">ai description</span><span class="dots"></span><span class="val">7 calls</span></div>
+          <div class="item"><span class="label">ai critique</span><span class="dots"></span><span class="val">3 calls</span></div>
+          <div class="item"><span class="label">ai reference photos</span><span class="dots"></span><span class="val">2 fetched</span></div>
+          <hr/>
+          <div class="total-row">
+            <span>AI slop generated</span>
+            <span class="total-circled">$0.00</span>
+          </div>
+          <div class="tip-line">
+            <span>tip:</span>
+            <span class="dots" style="border-bottom:1.5px dotted #a89868; flex:1; transform:translateY(-5px);"></span>
+            <a href="#" target="_blank" rel="noopener">read the manifesto &nbsp;❤︎</a>
+          </div>
+          <div class="foot">— made by a person. not for nothing. —</div>
+        </div>
+      </details>
+    </article>
+
+    <a href="#" class="block card p-6 hover:translate-x-[2px] transition">
+      <div class="flex items-center gap-4">
+        <div class="text-xl">🧾</div>
+        <div class="flex-1 min-w-0">
+          <div class="flex items-center gap-3 mb-1">
+            <h3 class="display text-base font-semibold">ai-receipts</h3>
+            <span class="text-[10px] mono px-2 py-0.5 rounded border border-line text-soft uppercase tracking-wider">npm · pypi</span>
+          </div>
+          <p class="text-sm text-soft truncate">Open-source library that powers the receipts on every project above.</p>
+        </div>
+        <span class="text-soft">→</span>
+      </div>
+    </a>
+  </section>
+
+  <!-- WRITING -->
+  <section id="writing" class="border-y border-line bg-soft">
+    <div class="max-w-3xl mx-auto px-6 py-16">
+      <h2 class="display text-3xl mb-8">Writing</h2>
+      <ul class="divide-y" style="--tw-divide-opacity:1;">
+        <li class="py-5 border-line">
+          <a href="#" class="group flex items-baseline justify-between gap-6">
+            <div>
+              <div class="text-[17px] mb-1 group-hover:text-accent transition display">What an agent that breaks PowerPoint taught me about Constitutional AI</div>
+              <div class="text-sm text-quiet">A working engineer's read of Anthropic's CAI paper, from someone shipping agentic UX.</div>
+            </div>
+            <div class="mono text-xs text-quiet whitespace-nowrap">May&nbsp;2026</div>
+          </a>
+        </li>
+        <li class="py-5 border-t border-line">
+          <a href="#" class="group flex items-baseline justify-between gap-6">
+            <div>
+              <div class="text-[17px] mb-1 group-hover:text-accent transition display">Why I put receipts on every project</div>
+              <div class="text-sm text-quiet">Tokens, latency, cost, energy, manual baseline. What I learned from publishing them.</div>
+            </div>
+            <div class="mono text-xs text-quiet whitespace-nowrap">May&nbsp;2026</div>
+          </a>
+        </li>
+        <li class="py-5 border-t border-line">
+          <a href="#" class="group flex items-baseline justify-between gap-6">
+            <div>
+              <div class="text-[17px] mb-1 group-hover:text-accent transition display">The corruption bug that took three weeks to find</div>
+              <div class="text-sm text-quiet">A debugging story from the PowerPoint Agent team.</div>
+            </div>
+            <div class="mono text-xs text-quiet whitespace-nowrap">Apr&nbsp;2026</div>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section id="about" class="max-w-3xl mx-auto px-6 py-20">
+    <h2 class="display text-3xl mb-8">About</h2>
+    <div class="grid md:grid-cols-[1fr,200px] gap-10 items-start">
+      <div class="space-y-5 text-[15.5px] text-soft leading-relaxed">
+        <p>
+          I'm a software engineer at <span style="color: var(--text)">Microsoft</span> on the
+          <span style="color: var(--text)">PowerPoint Agent</span> — M365 Copilot's generative AI for presentations.
+          My work ranges from LLM orchestration to prompt engineering, agent telemetry, enterprise policy
+          compliance, and staged rollouts behind feature flights.
+          <em class="serif-italic text-accent">Specialty: validating metrics before optimizing them.</em>
+          Before this I was on the Bing AI Generated Content team in Redmond, where I helped redesign
+          <span style="color: var(--text)">Bing Image Creator</span> and shipped
+          <span style="color: var(--text)">Bing Video Creator</span> — one of the first consumer Sora deployments.
+        </p>
+        <p>
+          I studied CS at <span style="color: var(--text)">Brown</span>. Before Microsoft I interned on the
+          Azure File Sync team and on Flipgrid's web camera team, where I learned that production C# pipelines
+          and PWAs are oddly similar to think about.
+        </p>
+        <p>
+          Outside of work I bake sourdough, throw pottery slowly, read voraciously, and have a fairly settled
+          opinion on Folklore vs. Evermore. I care about women's health, the environment, and the question of
+          how to use AI well without being naive about it.
+        </p>
+        <p class="serif-italic" style="color: var(--accent)">
+          I am, on purpose, two things at once. The slider isn't a gimmick — the fusion is the point.
+        </p>
+      </div>
+      <aside class="card p-5 text-sm">
+        <div class="mono text-xs text-quiet uppercase tracking-wider mb-3">Interests</div>
+        <ul class="space-y-1.5 text-soft">
+          <li>🥖 Sourdough</li>
+          <li>🏺 Pottery</li>
+          <li>📖 Reading</li>
+          <li>🌿 Plants</li>
+          <li>🎶 Taylor Swift</li>
+          <li>🌎 Environment</li>
+          <li>🐕 Dogs</li>
+          <li>🀄 Mahjong</li>
+        </ul>
+        <div class="mt-4 pt-4 border-t border-line">
+          <span class="stamp">grown with love</span>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="border-t border-line relative overflow-hidden">
+    <div class="botanical" style="bottom: 10px; right: 6%; transform: rotate(8deg);">
+      <svg width="64" height="50" viewBox="0 0 100 80" xmlns="http://www.w3.org/2000/svg">
+        <g fill="#b8593d" opacity="0.45">
+          <path d="M50 36 C 35 14, 12 18, 14 38 C 16 52, 36 50, 50 40 Z"/>
+          <path d="M50 36 C 65 14, 88 18, 86 38 C 84 52, 64 50, 50 40 Z"/>
+          <path d="M50 40 C 38 46, 22 60, 32 72 C 42 76, 50 60, 50 44 Z"/>
+          <path d="M50 40 C 62 46, 78 60, 68 72 C 58 76, 50 60, 50 44 Z"/>
+        </g>
+        <ellipse cx="50" cy="42" rx="1.5" ry="18" fill="#3a2418"/>
+      </svg>
+    </div>
+    <div class="relative max-w-3xl mx-auto px-6 py-10 flex flex-wrap items-center justify-between gap-4 text-sm text-quiet">
+      <div class="mono text-xs">© 2026 Katherine Marcus · <span class="reset-link" id="reset-mode">reset slider</span></div>
+      <div class="flex gap-5">
+        <a href="https://github.com/" class="hover:opacity-80 transition">GitHub</a>
+        <a href="https://linkedin.com/in/katherine-marcus" class="hover:opacity-80 transition">LinkedIn</a>
+        <a href="mailto:hi@kmarcus.dev" class="hover:opacity-80 transition">Email</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // ============================================================
+    // Three anchor palettes. Interpolated continuously by the slider.
+    // 0   = tech    (cold, dark, robotic)
+    // 0.5 = blend   (warm earthy modern — the default, the fusion)
+    // 1   = whimsy  (nature, florals, butterflies, garden)
+    // ============================================================
+    const PALETTES = {
+      tech: {
+        bg:        '#0a0a0b',
+        bgSoft:    '#131316',
+        border:    '#26262b',
+        text:      '#ededee',
+        textSoft:  '#a1a1aa',
+        textQuiet: '#71717a',
+        accent:    '#f4a261',
+      },
+      blend: {
+        bg:        '#ebe2d0',
+        bgSoft:    '#ddd0b8',
+        border:    '#b8a385',
+        text:      '#2a2218',
+        textSoft:  '#5a4d3a',
+        textQuiet: '#8a7860',
+        accent:    '#b06642',
+      },
+      whimsy: {
+        bg:        '#fcdce8',
+        bgSoft:    '#f7c2d5',
+        border:    '#df9ab2',
+        text:      '#3d1828',
+        textSoft:  '#724056',
+        textQuiet: '#a6788b',
+        accent:    '#c0306b',
+      },
+    };
+
+    // Layer opacities at each anchor
+    const LAYERS = {
+      tech:   { grid: 1, paper: 0, floral: 0 },
+      blend:  { grid: 0, paper: 1, floral: 0 },
+      whimsy: { grid: 0, paper: 0.35, floral: 1 },
+    };
+
+    // ---------- color math ----------
+    function hexToRgb(hex) {
+      const m = hex.replace('#','').match(/.{1,2}/g);
+      return m.map(h => parseInt(h, 16));
+    }
+    function rgbToHex(r, g, b) {
+      return '#' + [r,g,b].map(v => v.toString(16).padStart(2, '0')).join('');
+    }
+    function lerp(a, b, t) { return Math.round(a + (b - a) * t); }
+    function lerpColor(c1, c2, t) {
+      const [r1,g1,b1] = hexToRgb(c1);
+      const [r2,g2,b2] = hexToRgb(c2);
+      return rgbToHex(lerp(r1,r2,t), lerp(g1,g2,t), lerp(b1,b2,t));
+    }
+    function lerpNum(a, b, t) { return a + (b - a) * t; }
+
+    function interpolatePalettes(t) {
+      // t in [0,1]. Below 0.5: tech→blend. Above 0.5: blend→whimsy.
+      let a, b, local;
+      if (t <= 0.5) {
+        a = PALETTES.tech; b = PALETTES.blend; local = t * 2;
+      } else {
+        a = PALETTES.blend; b = PALETTES.whimsy; local = (t - 0.5) * 2;
+      }
+      const out = {};
+      for (const k of Object.keys(a)) {
+        out[k] = lerpColor(a[k], b[k], local);
+      }
+      return out;
+    }
+
+    function interpolateLayers(t) {
+      let a, b, local;
+      if (t <= 0.5) {
+        a = LAYERS.tech; b = LAYERS.blend; local = t * 2;
+      } else {
+        a = LAYERS.blend; b = LAYERS.whimsy; local = (t - 0.5) * 2;
+      }
+      return {
+        grid:   lerpNum(a.grid,   b.grid,   local),
+        paper:  lerpNum(a.paper,  b.paper,  local),
+        floral: lerpNum(a.floral, b.floral, local),
+      };
+    }
+
+    // Compute --accent-soft (12% accent on top of bg)
+    function accentSoft(accent) {
+      const [r,g,b] = hexToRgb(accent);
+      return `rgba(${r}, ${g}, ${b}, 0.12)`;
+    }
+
+    function applyMode(t) {
+      const p = interpolatePalettes(t);
+      const l = interpolateLayers(t);
+      const root = document.body;
+      root.style.setProperty('--bg', p.bg);
+      root.style.setProperty('--bg-soft', p.bgSoft);
+      root.style.setProperty('--border', p.border);
+      root.style.setProperty('--text', p.text);
+      root.style.setProperty('--text-soft', p.textSoft);
+      root.style.setProperty('--text-quiet', p.textQuiet);
+      root.style.setProperty('--accent', p.accent);
+      root.style.setProperty('--accent-soft', accentSoft(p.accent));
+      root.style.setProperty('--grid-opacity', l.grid);
+      root.style.setProperty('--paper-opacity', l.paper);
+      root.style.setProperty('--floral-opacity', l.floral);
+      // card radius: scale subtly with whimsy
+      root.style.setProperty('--card-radius', `${lerpNum(12, 20, t)}px`);
+    }
+
+    // ---------- wire it up ----------
+    const slider = document.getElementById('mode-slider');
+    function update() { applyMode(slider.value / 100); }
+    slider.addEventListener('input', update);
+    document.getElementById('reset-mode').addEventListener('click', () => {
+      slider.value = 50;
+      update();
+    });
+    // Initial render at default (blend)
+    update();
+  </script>
+</body>
+</html>
